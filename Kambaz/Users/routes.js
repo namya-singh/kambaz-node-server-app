@@ -2,7 +2,7 @@ import * as dao from "./dao.js";
 import * as enrollmentsDao from "../Enrollments/dao.js";
 import * as courseDao from "../Courses/dao.js";
 
-let currentUser = null;
+
 export default function UserRoutes(app) {
     const createCourse = (req, res) => {
         const currentUser = req.session["currentUser"];
@@ -49,7 +49,6 @@ export default function UserRoutes(app) {
 
     const signout = (req, res) => {
         req.session.destroy();
-        currentUser = null;
         res.sendStatus(200);
 
     };
@@ -72,4 +71,5 @@ export default function UserRoutes(app) {
     app.post("/api/users/signout", signout);
     app.post("/api/users/profile", profile);
 }
+
 

@@ -27,3 +27,4 @@ export const updateUser = (userId, user) =>
 
 export const deleteUser = (userId) =>
     (users = users.filter((u) => u._id !== userId));
+
