@@ -71,15 +71,32 @@ const domain = isProduction
                ? new URL(rawDomain.startsWith("http") ? rawDomain : `https://${rawDomain}`).hostname
                : undefined;
 
+// app.use(session({
+//                     secret: process.env.SESSION_SECRET || "kambaz",
+//                     resave: false,
+//                     saveUninitialized: false,
+//                     cookie: {
+//                         domain: isProduction ? '.netlify.app' : undefined,
+//                         secure: isProduction,
+//                         httpOnly: true,
+//                         sameSite: isProduction ? "none" : "lax",
+//                         maxAge: 24 * 60 * 60 * 1000, // 1 day
+//                     },
+//                     store: MongoStore.create({
+//                                                  mongoUrl: CONNECTION_STRING,
+//                                                  collectionName: "sessions",
+//                                              }),
+//                 }));
 app.use(session({
-                    secret: process.env.SESSION_SECRET || "kambaz",
+                    secret: process.env.SESSION_SECRET || "kambaz", // Ensure this is a strong secret on Render
                     resave: false,
-                    saveUninitialized: false,
+                    saveUninitialized: false, // Keep this as false
                     cookie: {
-                        domain: isProduction ? '.netlify.app' : undefined,
-                        secure: isProduction,
-                        httpOnly: true,
-                        sameSite: isProduction ? "none" : "lax",
+                        // *** THIS IS THE CRITICAL CHANGE: DELETE OR COMMENT OUT THIS LINE ***
+                        // domain, // <--- REMOVE OR COMMENT OUT THIS ENTIRE LINE
+                        secure: isProduction, // Keep this true for Render
+                        httpOnly: true, // Keep this true
+                        sameSite: isProduction ? "none" : "lax", // Keep this 'none' for Render
                         maxAge: 24 * 60 * 60 * 1000, // 1 day
                     },
                     store: MongoStore.create({
