@@ -130,6 +130,10 @@ export const createUser = async (user) => {
 export const findUserById = async (userId) => {
     return UserModel.findById(userId).exec();
 };
+export const findUsersByIds = (userIds) => {
+    // Assuming UserModel is your Mongoose model for users
+    return UserModel.find({ _id: { $in: userIds } }).exec();
+};
 
 
 export const findUserByUsername = async (username) => {

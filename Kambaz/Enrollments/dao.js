@@ -132,3 +132,6 @@ export function enrollUserInCourse(userId, courseId) {
 export function unenrollUserFromCourse(userId, courseId) {
     return model.deleteOne({ user: userId, course: courseId });
 }
+export const findEnrollmentsByCourse = (courseId) => {
+    return EnrollmentModel.find({ course: courseId }).exec(); // Assuming enrollment has a 'course' field with courseId
+};
