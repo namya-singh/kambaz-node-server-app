@@ -40,8 +40,17 @@ const allowedOrigins = [
 app.set("trust proxy", 1); // trust proxy for secure cookies
 
 app.use(cors({
+                 // origin: function (origin, callback) {
+                 //     console.log("🌐 Incoming origin:", origin);
+                 //     if (!origin || allowedOrigins.includes(origin)) {
+                 //         callback(null, true);
+                 //     } else {
+                 //         console.error("❌ Origin not allowed by CORS:", origin);
+                 //         callback(new Error(`Not allowed by CORS: ${origin}`));
+                 //     }
+                 // },
                  origin: function (origin, callback) {
-                     console.log("🌐 Incoming origin:", origin);
+                     console.log("🌐 Incoming origin:", origin); // This is good for debugging
                      if (!origin || allowedOrigins.includes(origin)) {
                          callback(null, true);
                      } else {
@@ -67,7 +76,7 @@ app.use(session({
                     resave: false,
                     saveUninitialized: false,
                     cookie: {
-                        // domain,
+                        domain: isProduction ? '.netlify.app' : undefined,
                         secure: isProduction,
                         httpOnly: true,
                         sameSite: isProduction ? "none" : "lax",
@@ -79,7 +88,7 @@ app.use(session({
                                              }),
                 }));
 
-app.use(session({ /* ... */ }));
+
 console.log("--> Session middleware added."); // Confirm this log appears
 
 // ADD THIS GLOBAL REQUEST LOGGER:
