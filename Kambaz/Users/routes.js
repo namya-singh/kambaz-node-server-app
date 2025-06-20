@@ -637,15 +637,25 @@ export default function UserRoutes(app) {
     const signin = async (req, res) => {
         try {
             const { username, password } = req.body;
+            console.log("Attempting signin for username:", username); // Add this
             const user = await dao.findUserByUsername(username);
-            if (!user) return res.status(401).json({ message: "Invalid credentials" });
+            if (!user) {
+                console.log("User not found for username:", username); // Add this
+                return res.status(401).json({ message: "Invalid credentials" });
+            }
 
+            console.log("User found:", user.username); // Add this
             const match = await bcrypt.compare(password, user.password);
-            if (!match) return res.status(401).json({ message: "Invalid credentials" });
+            if (!match) {
+                console.log("Password mismatch for username:", username); // Add this
+                return res.status(401).json({ message: "Invalid credentials" });
+            }
 
             req.session.currentUser = user;
+            console.log("User signed in successfully:", user.username); // Add this
             res.json(user);
         } catch (err) {
+            console.error("Error during signin:", err); // Crucial for catching unexpected errors
             res.status(500).json({ error: err.message });
         }
     };
