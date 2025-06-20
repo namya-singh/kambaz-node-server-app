@@ -17,7 +17,7 @@ import EnrollmentRoutes from './Kambaz/Enrollments/routes.js';
 // 1) MongoDB Connection
 // ——————————————
 const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING ||
-                          "mongodb+srv://namyasingh:Nomoney%4022@kambaz.gsnicet.mongodb.net/?retryWrites=true&w=majority&appName=Kambaz";
+                          "mongodb+srv://namyasingh:Nomoney%4022@kambaz.gsnicet.mongodb.net/Kambaz?retryWrites=true&w=majority&appName=Kambaz";
 
 mongoose.connect(CONNECTION_STRING)
     .then(() => console.log("✅ Connected to MongoDB"))
@@ -91,8 +91,6 @@ app.use((req, res, next) => {
 // 5) Routes
 // ——————————————
 console.log("--> Registering UserRoutes...");
-UserRoutes(app);
-console.log("--> UserRoutes registered."); // Confirm this log appears
 UserRoutes(app);
 CourseRoutes(app);
 ModuleRoutes(app);
