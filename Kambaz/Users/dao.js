@@ -109,7 +109,6 @@
 
 
 import UserModel from "./model.js";
-import bcrypt    from "bcrypt";
 import model from "./model.js";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
