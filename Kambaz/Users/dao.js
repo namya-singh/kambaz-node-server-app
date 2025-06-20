@@ -112,12 +112,21 @@ import UserModel from "./model.js";
 import bcrypt    from "bcrypt";
 import model from "./model.js";
 import { v4 as uuidv4 } from "uuid";
+import bcrypt from "bcrypt";
 
-export const createUser = (user) => {
-    const { _id, ...u } = user;
-    const newUser       = { ...u, _id: uuidv4() };
+export const createUser = async (user) => {
+    const { password, ...rest } = user;
+    const hashedPassword = await bcrypt.hash(password, 10); // 10 salt rounds
+    const newUser = { ...rest, password: hashedPassword, _id: uuidv4() };
     return model.create(newUser);
 };
+
+//
+// export const createUser = (user) => {
+//     const { _id, ...u } = user;
+//     const newUser       = { ...u, _id: uuidv4() };
+//     return model.create(newUser);
+// };
 
 export const findUserById = async (userId) => {
     return UserModel.findById(userId).exec();
@@ -138,18 +147,16 @@ export const findUserByCredentials = async (username, password) => {
 
     if (!user) return null;
 
-    if (user.password === password) return user;
-
     try {
-        if (await bcrypt.compare(password, user.password)) {
-            return user;
-        }
+        const passwordMatches = await bcrypt.compare(password, user.password);
+        if (passwordMatches) return user;
     } catch (e) {
         console.warn("bcrypt.compare failed:", e.message);
     }
 
     return null;
 };
+
 
 export const updateUser = async (userId, updates) => {
     return UserModel.findByIdAndUpdate(
