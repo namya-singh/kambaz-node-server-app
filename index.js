@@ -19,7 +19,9 @@ import EnrollmentRoutes from './Kambaz/Enrollments/routes.js';
 const CONNECTION_STRING = process.env.MONGO_CONNECTION_STRING ||
                           "mongodb+srv://namyasingh:Nomoney%4022@kambaz.gsnicet.mongodb.net/?retryWrites=true&w=majority&appName=Kambaz";
 
-mongoose.connect(CONNECTION_STRING);
+mongoose.connect(CONNECTION_STRING)
+    .then(() => console.log("✅ Connected to MongoDB"))
+    .catch(err => console.error("❌ MongoDB connection error:", err));
 
 // ——————————————
 // 2) Express Setup
@@ -32,14 +34,13 @@ app.use(express.json());
 // ——————————————
 const allowedOrigins = [
     'https://kambazz.netlify.app',
-    'https://localhost:5173',
+    'http://localhost:5173'
 ];
 
-// Trust proxy for secure cookies behind proxies like Render or Heroku
-app.set("trust proxy", 1);
+app.set("trust proxy", 1); // trust proxy for secure cookies
 
 app.use(cors({
-                 origin: (origin, callback) => {
+                 origin: function (origin, callback) {
                      console.log("🌐 Incoming origin:", origin);
                      if (!origin || allowedOrigins.includes(origin)) {
                          callback(null, true);
@@ -52,29 +53,26 @@ app.use(cors({
              }));
 
 // ——————————————
-// 4) Session Setup (with MongoStore)
+// 4) Session Setup
 // ——————————————
 const isProduction = process.env.NODE_ENV === "production";
 
-const sessionOptions = {
-    secret: process.env.SESSION_SECRET || "kambaz",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        domain: isProduction ? process.env.NODE_SERVER_DOMAIN : undefined,
-        secure: isProduction,            // true only in production
-        httpOnly: true,
-        sameSite: isProduction ? "none" : "lax",
-        maxAge: 24 * 60 * 60 * 1000,
-
-    },
-    store: MongoStore.create({
-                                 mongoUrl: CONNECTION_STRING,
-                                 collectionName: 'sessions',
-                             }),
-};
-
-app.use(session(sessionOptions));
+app.use(session({
+                    secret: process.env.SESSION_SECRET || "kambaz",
+                    resave: false,
+                    saveUninitialized: false,
+                    cookie: {
+                        domain: isProduction ? new URL(process.env.NODE_SERVER_DOMAIN).hostname : undefined,
+                        secure: isProduction,
+                        httpOnly: true,
+                        sameSite: isProduction ? "none" : "lax",
+                        maxAge: 24 * 60 * 60 * 1000, // 1 day
+                    },
+                    store: MongoStore.create({
+                                                 mongoUrl: CONNECTION_STRING,
+                                                 collectionName: "sessions",
+                                             }),
+                }));
 
 // ——————————————
 // 5) Routes
@@ -107,6 +105,7 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log(`✅ Server listening on port ${PORT}`);
 });
+
 
 
 
