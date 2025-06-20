@@ -639,11 +639,15 @@ export default function UserRoutes(app) {
         try {
             const { username, password } = req.body;
 
-            console.log("--- Signin Attempt ---");
-            console.log("1. Username received:", username);
-            console.log("2. Password received (from frontend): '" + password + "'"); // Wrap in quotes to reveal leading/trailing spaces
-            console.log("3. Password length received:", password ? password.length : 'N/A');
+            // Test 1: Compare 'test' against the hash from your DB
+            const debugMatch1 = await bcrypt.compare(testPlainPassword, testStoredHash);
+            console.log("DEBUG: Direct bcrypt.compare('test', stored_hash) result:", debugMatch1);
 
+            // Test 2: Generate a NEW hash for 'test' on the server, then compare 'test' against that new hash
+            const newlyHashedTest = await bcrypt.hash(testPlainPassword, 10);
+            console.log("DEBUG: Newly generated hash for 'test' (on server): '" + newlyHashedTest + "'");
+            const debugMatch2 = await bcrypt.compare(testPlainPassword, newlyHashedTest);
+            console.log("DEBUG: Direct bcrypt.compare('test', newly_generated_hash) result:", debugMatch2);
             const user = await dao.findUserByUsername(username);
 
             if (!user) {
@@ -654,6 +658,7 @@ export default function UserRoutes(app) {
             console.log("4. User found:", user.username);
             console.log("5. Stored hashed password (from DB): '" + user.password + "'"); // Wrap in quotes
             console.log("6. Stored hashed password length:", user.password ? user.password.length : 'N/A');
+
 
             const match = await bcrypt.compare(password, user.password);
 
