@@ -8,11 +8,9 @@ import model from "./model.js";
 import { v4 as uuidv4 } from "uuid";
 import * as enrollmentDao from "../Enrollments/dao.js";
 
-
 export const createCourse = (course) => {
-    // Change this line: Let Mongoose automatically generate the _id
-    // by simply passing the course object.
-    return model.create(course);
+    const newCourse = { ...course, _id: uuidv4() };
+    return model.create(newCourse);
 };
 
 export const findAllCourses = () =>
