@@ -203,52 +203,52 @@ export default function UserRoutes(app) {
         }
     };
 
-    // const updateUser = async (req, res) => {
-    //     try {
-    //         const updates = { ...req.body };
-    //         delete updates._id;
-    //         if (typeof updates.dob === "string") {
-    //             updates.dob = new Date(updates.dob);
-    //         }
-    //         const updated = await dao.updateUser(req.params.userId, updates);
-    //         if (!updated) return res.sendStatus(404);
-    //         if (
-    //             req.session.currentUser &&
-    //             req.session.currentUser._id === updated._id.toString()
-    //         ) {
-    //             req.session.currentUser = updated;
-    //         }
-    //         res.json(updated);
-    //     } catch (err) {
-    //         console.error("Profile update failed:", err);
-    //         res.status(400).json({ message: err.message });
-    //     }
-    // };
-    const updateUserHandler = async (req, res) => {
+    const updateUser = async (req, res) => {
         try {
-            const userId = req.params.userId;
             const updates = { ...req.body };
             delete updates._id;
-
-            // Convert dob string to Date if needed
             if (typeof updates.dob === "string") {
                 updates.dob = new Date(updates.dob);
             }
-
-            const updated = await dao.updateUser(userId, updates);
+            const updated = await dao.updateUser(req.params.userId, updates);
             if (!updated) return res.sendStatus(404);
-
-            // Sync session if current user updated themselves
-            if (req.session.currentUser && req.session.currentUser._id === updated._id.toString()) {
+            if (
+                req.session.currentUser &&
+                req.session.currentUser._id === updated._id.toString()
+            ) {
                 req.session.currentUser = updated;
             }
-
             res.json(updated);
         } catch (err) {
             console.error("Profile update failed:", err);
             res.status(400).json({ message: err.message });
         }
     };
+    // const updateUserHandler = async (req, res) => {
+    //     try {
+    //         const userId = req.params.userId;
+    //         const updates = { ...req.body };
+    //         delete updates._id;
+    //
+    //         // Convert dob string to Date if needed
+    //         if (typeof updates.dob === "string") {
+    //             updates.dob = new Date(updates.dob);
+    //         }
+    //
+    //         const updated = await dao.updateUser(userId, updates);
+    //         if (!updated) return res.sendStatus(404);
+    //
+    //         // Sync session if current user updated themselves
+    //         if (req.session.currentUser && req.session.currentUser._id === updated._id.toString()) {
+    //             req.session.currentUser = updated;
+    //         }
+    //
+    //         res.json(updated);
+    //     } catch (err) {
+    //         console.error("Profile update failed:", err);
+    //         res.status(400).json({ message: err.message });
+    //     }
+    // };
 
 // Register this once
     app.put("/api/users/:userId", updateUserHandler);
