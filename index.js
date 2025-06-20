@@ -67,7 +67,7 @@ app.use(session({
                     resave: false,
                     saveUninitialized: false,
                     cookie: {
-                        domain,
+                        // domain,
                         secure: isProduction,
                         httpOnly: true,
                         sameSite: isProduction ? "none" : "lax",
