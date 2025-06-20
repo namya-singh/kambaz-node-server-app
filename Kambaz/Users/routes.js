@@ -661,6 +661,7 @@ export default function UserRoutes(app) {
     };
 
     const profile = (req, res) => {
+        console.log("--> Profile route handler reached!");
         const cu = req.session.currentUser;
         if (!cu) return res.json(null);
         res.json(cu);

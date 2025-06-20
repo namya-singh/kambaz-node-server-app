@@ -79,10 +79,20 @@ app.use(session({
                                              }),
                 }));
 
+app.use(session({ /* ... */ }));
+console.log("--> Session middleware added."); // Confirm this log appears
 
+// ADD THIS GLOBAL REQUEST LOGGER:
+app.use((req, res, next) => {
+    console.log(`--> Incoming Request: ${req.method} ${req.originalUrl}`);
+    next();
+});
 // ——————————————
 // 5) Routes
 // ——————————————
+console.log("--> Registering UserRoutes...");
+UserRoutes(app);
+console.log("--> UserRoutes registered."); // Confirm this log appears
 UserRoutes(app);
 CourseRoutes(app);
 ModuleRoutes(app);
