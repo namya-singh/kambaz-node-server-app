@@ -230,6 +230,13 @@ export default function UserRoutes(app) {
             res.status(500).json({ message: err.message });
         }
     };
+    app.get("/api/users/profile", (req, res) => {
+        const cu = req.session.currentUser;
+        if (!cu) {
+            return res.status(401).json({ message: "Not signed in" });
+        }
+        res.json(cu);
+    });
 
     // ... (existing route registrations)
 
