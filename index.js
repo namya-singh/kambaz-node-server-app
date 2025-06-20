@@ -56,13 +56,18 @@ app.use(cors({
 // 4) Session Setup
 // ——————————————
 const isProduction = process.env.NODE_ENV === "production";
+const rawDomain = process.env.NODE_SERVER_DOMAIN || "";
+
+const domain = isProduction
+               ? new URL(rawDomain.startsWith("http") ? rawDomain : `https://${rawDomain}`).hostname
+               : undefined;
 
 app.use(session({
                     secret: process.env.SESSION_SECRET || "kambaz",
                     resave: false,
                     saveUninitialized: false,
                     cookie: {
-                        domain: isProduction ? new URL(process.env.NODE_SERVER_DOMAIN).hostname : undefined,
+                        domain,
                         secure: isProduction,
                         httpOnly: true,
                         sameSite: isProduction ? "none" : "lax",
@@ -73,6 +78,7 @@ app.use(session({
                                                  collectionName: "sessions",
                                              }),
                 }));
+
 
 // ——————————————
 // 5) Routes
