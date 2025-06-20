@@ -639,15 +639,36 @@ export default function UserRoutes(app) {
         try {
             const { username, password } = req.body;
 
-            // Test 1: Compare 'test' against the hash from your DB
-            const debugMatch1 = await bcrypt.compare(testPlainPassword, testStoredHash);
-            console.log("DEBUG: Direct bcrypt.compare('test', stored_hash) result:", debugMatch1);
+            console.log("--- Signin Attempt ---");
+            console.log("1. Username received:", username);
+            console.log("2. Password received (from frontend): '" + password + "'");
+            console.log("3. Password length received:", password ? password.length : 'N/A');
 
-            // Test 2: Generate a NEW hash for 'test' on the server, then compare 'test' against that new hash
-            const newlyHashedTest = await bcrypt.hash(testPlainPassword, 10);
-            console.log("DEBUG: Newly generated hash for 'test' (on server): '" + newlyHashedTest + "'");
-            const debugMatch2 = await bcrypt.compare(testPlainPassword, newlyHashedTest);
-            console.log("DEBUG: Direct bcrypt.compare('test', newly_generated_hash) result:", debugMatch2);
+            // --- TEMPORARY DEBUG CODE START ---
+            // THESE VARIABLES MUST BE DECLARED
+            const testPlainPassword = "test"; // The plain password you created the 'user' with
+            const testStoredHash = '$2b$10$5kSBc4xNgTgiRycF7n/ngODrzz7SEr8J9zRdDlgcHl.aY7mcxlv9u'; // The exact hash from your DB for 'user/test'
+            console.log("--- DEBUG: Bypassing login logic for direct bcrypt test ---");
+            console.log("DEBUG: Test Plain Password (hardcoded): '" + testPlainPassword + "'");
+            console.log("DEBUG: Test Stored Hash (hardcoded from DB): '" + testStoredHash + "'");
+
+            try {
+                // Test 1: Compare 'test' against the hash from your DB
+                const debugMatch1 = await bcrypt.compare(testPlainPassword, testStoredHash);
+                console.log("DEBUG: Direct bcrypt.compare('test', stored_hash) result:", debugMatch1);
+
+                // Test 2: Generate a NEW hash for 'test' on the server, then compare 'test' against that new hash
+                const newlyHashedTest = await bcrypt.hash(testPlainPassword, 10);
+                console.log("DEBUG: Newly generated hash for 'test' (on server): '" + newlyHashedTest + "'");
+                const debugMatch2 = await bcrypt.compare(testPlainPassword, newlyHashedTest);
+                console.log("DEBUG: Direct bcrypt.compare('test', newly_generated_hash) result:", debugMatch2);
+
+            } catch (debugErr) {
+                console.error("DEBUG: Error during direct bcrypt test:", debugErr);
+            }
+            console.log("--- DEBUG: End of direct bcrypt test ---");
+            // --- TEMPORARY DEBUG CODE END ---
+
             const user = await dao.findUserByUsername(username);
 
             if (!user) {
