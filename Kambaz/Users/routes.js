@@ -634,28 +634,46 @@ export default function UserRoutes(app) {
         }
     };
 
+
     const signin = async (req, res) => {
         try {
             const { username, password } = req.body;
-            console.log("Attempting signin for username:", username); // Add this
+
+            console.log("--- Signin Attempt ---");
+            console.log("1. Username received:", username);
+            console.log("2. Password received (from frontend): '" + password + "'"); // Wrap in quotes to reveal leading/trailing spaces
+            console.log("3. Password length received:", password ? password.length : 'N/A');
+
             const user = await dao.findUserByUsername(username);
+
             if (!user) {
-                console.log("User not found for username:", username); // Add this
+                console.log("4. User not found for username:", username);
                 return res.status(401).json({ message: "Invalid credentials" });
             }
 
-            console.log("User found:", user.username); // Add this
+            console.log("4. User found:", user.username);
+            console.log("5. Stored hashed password (from DB): '" + user.password + "'"); // Wrap in quotes
+            console.log("6. Stored hashed password length:", user.password ? user.password.length : 'N/A');
+
             const match = await bcrypt.compare(password, user.password);
+
             if (!match) {
-                console.log("Password mismatch for username:", username); // Add this
+                console.log("7. Password mismatch for username:", username);
+                // This is an advanced debug step, uncomment only if needed and understand the implications
+                // try {
+                //     const reHashedInput = await bcrypt.hash(password, 10);
+                //     console.log("8. Re-hashed input password (for comparison debug):", reHashedInput);
+                // } catch (hashError) {
+                //     console.error("8. Error re-hashing input for debug:", hashError);
+                // }
                 return res.status(401).json({ message: "Invalid credentials" });
             }
 
             req.session.currentUser = user;
-            console.log("User signed in successfully:", user.username); // Add this
+            console.log("7. User signed in successfully:", user.username);
             res.json(user);
         } catch (err) {
-            console.error("Error during signin:", err); // Crucial for catching unexpected errors
+            console.error("Error during signin:", err);
             res.status(500).json({ error: err.message });
         }
     };
