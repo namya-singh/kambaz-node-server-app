@@ -97,7 +97,7 @@ app.use(session({
                         secure: isProduction, // Keep this true for Render
                         httpOnly: true, // Keep this true
                         sameSite: isProduction ? "none" : "lax",
-                        domain: 'kambaz-node-server-app-bwyf.onrender.com',
+                        //domain: 'kambaz-node-server-app-bwyf.onrender.com',
                         maxAge: 24 * 60 * 60 * 1000, // 1 day
                     },
                     store: MongoStore.create({
